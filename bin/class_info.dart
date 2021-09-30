@@ -121,8 +121,8 @@ void main(List<String> arguments) async {
     String key = item.split(":!:")[0];
     String value = item.split(":!:")[1];
     await con.query(
-        "UPDATE polarStar.CLASS_INFO SET INDEX_SECTOR_TOTAL = ? WHERE CLASS_SECTOR_TOTAL = ?",
-        [value, key]);
+        "insert into polarStar.CLASS_INDEX(INDEX_TYPE_NAME, `INDEX`, `NAME`,INDEX_TYPE) VALUES(?,?,?,?)",
+        ["CLASS_SECTOR_TOTAL", value, key, 1]);
   }
 
   for (var item in cs1) {
@@ -132,24 +132,24 @@ void main(List<String> arguments) async {
     String key = item.split(":!:")[0];
     String value = item.split(":!:")[1];
     await con.query(
-        "UPDATE polarStar.CLASS_INFO SET INDEX_SECTOR_1 = ? WHERE CLASS_SECTOR_1 = ?",
-        [value, key]);
+        "insert into polarStar.CLASS_INDEX(INDEX_TYPE_NAME, `INDEX`, `NAME`,INDEX_TYPE) VALUES(?,?,?,?)",
+        ["CLASS_SECTOR_1", value, key, 0]);
   }
 
   for (var item in cn) {
     String key = item.split(":!:")[0];
     String value = item.split(":!:")[1];
     await con.query(
-        "UPDATE polarStar.CLASS_INFO SET INDEX_COLLEGE_NAME = ? WHERE COLLEGE_NAME = ?",
-        [value, key]);
+        "insert into polarStar.CLASS_INDEX(INDEX_TYPE_NAME, `INDEX`, `NAME`,INDEX_TYPE) VALUES(?,?,?,?)",
+        ["COLLEGE_NAME", value, key, 2]);
   }
 
   for (var item in cm) {
     String key = item.split(":!:")[0];
     String value = item.split(":!:")[1];
     await con.query(
-        "UPDATE polarStar.CLASS_INFO SET INDEX_COLLEGE_MAJOR = ? WHERE COLLEGE_MAJOR = ?",
-        [value, key]);
+        "insert into polarStar.CLASS_INDEX(INDEX_TYPE_NAME, `INDEX`, `NAME`,INDEX_TYPE) VALUES(?,?,?,?)",
+        ["COLLEGE_MAJOR", value, key, 3]);
   }
   print("finish");
   return;
