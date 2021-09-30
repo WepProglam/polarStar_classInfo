@@ -52,7 +52,21 @@ void insertDB(table, con, log, i) async {
   log.writeAsString("${i} / ${table.rows.length - 1}\n", mode: FileMode.append);
 }
 
-void readColdata(table) async {
+void main(List<String> arguments) async {
+  var file = "class.xlsx";
+  var log_file = "log.txt";
+  var error_file = "error.txt";
+
+  var bytes = File(file).readAsBytesSync();
+  var excel = Excel.decodeBytes(bytes);
+  Sheet table = excel.tables["Sheet"];
+  MySqlConnection con = await getDB();
+
+  var log = File(log_file);
+  var error = File(error_file);
+
+  log.writeAsString("FILE LOG\n");
+
   ColData data = ColData();
   // table.rows.length - 1
   for (int i = 1; i < table.rows.length - 1; i++) {
@@ -71,22 +85,22 @@ void readColdata(table) async {
   await cm.writeAsString("COLLEGE_MAJOR\n");
 
   for (var i = 0; i < data.CLASS_SECTOR_TOTAL.length; i++) {
-    await cst.writeAsString("${data.CLASS_SECTOR_TOTAL[i]} ${i}\n",
+    await cst.writeAsString("${data.CLASS_SECTOR_TOTAL[i]}:!:${i}\n",
         mode: FileMode.append);
   }
 
   for (var i = 0; i < data.CLASS_SECTOR_1.length; i++) {
-    await cs1.writeAsString("${data.CLASS_SECTOR_1[i]} ${i}\n",
+    await cs1.writeAsString("${data.CLASS_SECTOR_1[i]}:!:${i}\n",
         mode: FileMode.append, encoding: utf8);
   }
 
   for (var i = 0; i < data.COLLEGE_NAME.length; i++) {
-    await cn.writeAsString("${data.COLLEGE_NAME[i]} ${i}\n",
+    await cn.writeAsString("${data.COLLEGE_NAME[i]}:!:${i}\n",
         mode: FileMode.append, encoding: utf8);
   }
 
   for (var i = 0; i < data.COLLEGE_MAJOR.length; i++) {
-    await cm.writeAsString("${data.COLLEGE_MAJOR[i]} ${i}\n",
+    await cm.writeAsString("${data.COLLEGE_MAJOR[i]}:!:${i}\n",
         mode: FileMode.append, encoding: utf8);
   }
 
@@ -94,63 +108,6 @@ void readColdata(table) async {
   print("${data.CLASS_SECTOR_1} :  ${data.CLASS_SECTOR_1.length}");
   print("${data.COLLEGE_NAME} :  ${data.COLLEGE_NAME.length}");
   print("${data.COLLEGE_MAJOR} :  ${data.COLLEGE_MAJOR.length}");
-}
 
-void main(List<String> arguments) async {
-  // var file = "class.xlsx";
-  // var log_file = "log.txt";
-  // var error_file = "error.txt";
-
-  // var bytes = File(file).readAsBytesSync();
-  // var excel = Excel.decodeBytes(bytes);
-  // Sheet table = excel.tables["Sheet"];
-
-  MySqlConnection con = await getDB();
-
-  var cst_txt = File("CLASS_SECTOR_TOTAL.txt");
-  var cs1_txt = File("CLASS_SECTOR_1.txt");
-  var cn_txt = File("COLLEGE_NAME.txt");
-  var cm_txt = File("COLLEGE_MAJOR.txt");
-
-  var cst = await cst_txt.readAsLines();
-  var cs1 = await cs1_txt.readAsLines();
-  var cn = await cn_txt.readAsLines();
-  var cm = await cm_txt.readAsLines();
-
-  for (var item in cst) {
-    String key = item.split(" ")[0];
-    String value = item.split(" ")[1];
-    await con.query(
-        "UPDATE polarStar.CLASS_INFO SET INDEX_SECTOR_TOTAL = ? WHERE CLASS_SECTOR_TOTAL = ?",
-        [value, key]);
-  }
-
-  for (var item in cs1) {
-    if (item.isEmpty) {
-      break;
-    }
-    String key = item.split(" ").first;
-    String value = item.split(" ").last;
-    await con.query(
-        "UPDATE polarStar.CLASS_INFO SET INDEX_SECTOR_1 = ? WHERE CLASS_SECTOR_1 = ?",
-        [value, key]);
-  }
-
-  for (var item in cn) {
-    String key = item.split(" ")[0];
-    String value = item.split(" ")[1];
-    await con.query(
-        "UPDATE polarStar.CLASS_INFO SET INDEX_COLLEGE_NAME = ? WHERE COLLEGE_NAME = ?",
-        [value, key]);
-  }
-
-  for (var item in cm) {
-    String key = item.split(" ")[0];
-    String value = item.split(" ")[1];
-    await con.query(
-        "UPDATE polarStar.CLASS_INFO SET INDEX_COLLEGE_MAJOR = ? WHERE COLLEGE_MAJOR = ?",
-        [value, key]);
-  }
-  print("finish");
   return;
 }
